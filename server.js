@@ -1,23 +1,21 @@
 import { Server } from "socket.io";
 import http from "http";
-import cors from "cors";
 import express from "express";
-import axios from "axios"; // 🔹 Importar Axios para chamar a API do backend
 
 const app = express();
 const server = http.createServer(app);
 
-// 🔹 Definir a porta automaticamente ou usar 4000 como fallback
-const PORT = process.env.PORT || 10000;
+const PORT = process.env.PORT || 4000;  // Tente também mudar para 443
 
 const io = new Server(server, { 
   cors: { 
     origin: "*",
     methods: ["GET", "POST"]
-  } 
+  },
+  transports: ["websocket"],  // 🔹 Força WebSocket puro
+  allowEIO3: true
 });
 
-// 🔹 Rota para testar no navegador
 app.get("/", (req, res) => {
   res.send("🚀 Servidor WebSocket rodando!");
 });
@@ -25,17 +23,8 @@ app.get("/", (req, res) => {
 io.on("connection", (socket) => {
   console.log(`🟢 Novo cliente conectado! ID: ${socket.id}`);
 
-  socket.on("update-location", async (data) => {
+  socket.on("update-location", (data) => {
     console.log(`📡 Localização recebida do usuário ${data.userId}:`, data);
-    
-    // 🔹 Enviar para a Vercel para salvar no Firebase
-    try {
-      await axios.post("https://backend-gpstracker.vercel.app/gps", data);
-      console.log("✅ Localização enviada para o backend!");
-    } catch (error) {
-      console.error("❌ Erro ao enviar para o backend:", error.message);
-    }
-
     io.emit("location-update", data);
   });
 
@@ -44,7 +33,7 @@ io.on("connection", (socket) => {
   });
 });
 
-// 🔹 Alterado para a variável PORT
+// 🔹 Alterado para usar qualquer IP disponível
 server.listen(PORT, "0.0.0.0", () => {
   console.log(`🚀 Servidor WebSocket rodando na porta ${PORT}!`);
 });
