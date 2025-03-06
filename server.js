@@ -8,6 +8,11 @@ const server = http.createServer(app);
 
 const io = new Server(server, { cors: { origin: "*" } });
 
+// 🔹 Rota para testar no navegador
+app.get("/", (req, res) => {
+  res.send("🚀 Servidor WebSocket rodando!");
+});
+
 io.on("connection", (socket) => {
   console.log(`🟢 Novo cliente conectado! ID: ${socket.id}`);
 
