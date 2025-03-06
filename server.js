@@ -8,7 +8,7 @@ const app = express();
 const server = http.createServer(app);
 
 // 🔹 Definir a porta automaticamente ou usar 4000 como fallback
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 10000;
 
 const io = new Server(server, { 
   cors: { 
