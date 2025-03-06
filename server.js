@@ -6,7 +6,15 @@ import express from "express";
 const app = express();
 const server = http.createServer(app);
 
-const io = new Server(server, { cors: { origin: "*" } });
+// 🔹 Definir a porta automaticamente ou usar 4000 como fallback
+const PORT = process.env.PORT || 4000;
+
+const io = new Server(server, { 
+  cors: { 
+    origin: "*",
+    methods: ["GET", "POST"]
+  } 
+});
 
 // 🔹 Rota para testar no navegador
 app.get("/", (req, res) => {
@@ -26,6 +34,7 @@ io.on("connection", (socket) => {
   });
 });
 
-server.listen(4000, "0.0.0.0", () => {
-  console.log("🚀 Servidor WebSocket rodando na porta 4000!");
+// 🔹 Alterado para a variável PORT
+server.listen(PORT, "0.0.0.0", () => {
+  console.log(`🚀 Servidor WebSocket rodando na porta ${PORT}!`);
 });
