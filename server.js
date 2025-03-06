@@ -5,7 +5,6 @@ import express from "express";
 const app = express();
 const server = http.createServer(app);
 
-const PORT = process.env.PORT || 4000;  // Tente também mudar para 443
 
 const io = new Server(server, { 
   cors: { 
@@ -34,6 +33,7 @@ io.on("connection", (socket) => {
 });
 
 // 🔹 Alterado para usar qualquer IP disponível
+const PORT = process.env.PORT || 8080;
 server.listen(PORT, "0.0.0.0", () => {
   console.log(`🚀 Servidor WebSocket rodando na porta ${PORT}!`);
 });
