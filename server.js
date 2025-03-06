@@ -2,6 +2,7 @@ import { Server } from "socket.io";
 import http from "http";
 import cors from "cors";
 import express from "express";
+import axios from "axios"; // 🔹 Importar Axios para chamar a API do backend
 
 const app = express();
 const server = http.createServer(app);
@@ -24,8 +25,17 @@ app.get("/", (req, res) => {
 io.on("connection", (socket) => {
   console.log(`🟢 Novo cliente conectado! ID: ${socket.id}`);
 
-  socket.on("update-location", (data) => {
+  socket.on("update-location", async (data) => {
     console.log(`📡 Localização recebida do usuário ${data.userId}:`, data);
+    
+    // 🔹 Enviar para a Vercel para salvar no Firebase
+    try {
+      await axios.post("https://backend-gpstracker.vercel.app/gps", data);
+      console.log("✅ Localização enviada para o backend!");
+    } catch (error) {
+      console.error("❌ Erro ao enviar para o backend:", error.message);
+    }
+
     io.emit("location-update", data);
   });
 
